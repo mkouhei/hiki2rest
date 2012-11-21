@@ -7,6 +7,14 @@ import json
 from io import StringIO
 
 
+def convert_metatext(meta_text):
+    conv_s = replace_keyword(meta_text)
+    conv_s = replace_string(conv_s, key_repl)
+    conv_s = replace_time(conv_s)
+    conv_s = json.JSONEncoder(object).encode(conv_s)
+    return conv_s.decode('utf-8')
+
+
 # get title from filename
 def decode_title(title):
     return unicode(urllib2.unquote(title),
@@ -44,6 +52,7 @@ def replace_keyword(text):
 
     return text_converted
 
+
 """ get body txt
 with open('text/vi%A4%F2%BC%C2%B9%D4%A4%C7%A4%AD%A4%CA%A4%A4') as f:
     body_text = unicode(f.read(), 'euc-jp').encode('utf-8')
@@ -67,12 +76,6 @@ with open('info.db') as f:
 os.chdir('text')
 title_decoded_title_pair = {i: decode_title(i) for i in glob.glob('*')}
 
-tmp1 = replace_keyword(meta_text)
-tmp2 = replace_string(tmp1, key_repl)
-tmp3 = replace_time(tmp2)
-tmp4 = unicode(tmp3, 'utf-8').encode('utf-8')
-#tmp5 = json.JSONEncoder(object).encode(tmp4)
-tmp5 = json.JSONEncoder(object).encode(tmp4)
-tmp6 = tmp5.decode('utf-8')
-io = StringIO(tmp6)
+
+io = StringIO(convert_metatext(meta_text))
 print json.load(io).encode('utf-8')
